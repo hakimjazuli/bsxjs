@@ -1,0 +1,225 @@
+// @ts-check
+
+import { TryAsync } from '../function/TryAsync.mjs';
+import { Console } from './Console.mjs';
+
+/**
+ * @description
+ * - class for `Queue` handling;
+ * - passed as `BSX.q`;
+ * @template {AnyButUndefined} DEFINEDANY
+ */
+export class QChannel {
+	/**
+	 * @param {string} name
+	 * - only used as helper for logging, and has nothing to do with runtime behaviour;
+	 */
+	constructor(name) {
+		this.name = name;
+		this.open();
+	}
+	/**
+	 * @typedef {import('../typehints/AnyButUndefined.mjs').AnyButUndefined} AnyButUndefined
+	 * @typedef {import('../typehints/QCBReturn.mjs').QCBReturn} QCBReturn
+	 * @typedef {import('../typehints/QCBFIFOReturn.mjs').QCBFIFOReturn} QCBFIFOReturn
+	 */
+	/**
+	 * @type {Map<AnyButUndefined, [Promise<any>, {}]>}
+	 */
+	static #uniquePromiser = new Map();
+	/**
+	 * - ensures that each id has only one task running at a time.
+	 * - calls with the same id will wait for the previous call to finish.
+	 * @param {AnyButUndefined} id
+	 * @param {QChannel<any>} instance
+	 * @returns {Promise<QCBReturn>} Resolves when it's safe to proceed for the given id, returning a cleanup function
+	 */
+	static #uniqueCB = async (id, instance) => {
+		const existing = QChannel.#uniquePromiser.get(id);
+		const { promise, resolve } = Promise.withResolvers();
+		const context = {};
+		if (existing === undefined) {
+			QChannel.#uniquePromiser.set(id, [promise, context]);
+			await Promise.resolve();
+		} else {
+			const [prevPromise] = existing;
+			await prevPromise;
+			QChannel.#uniquePromiser.set(id, [promise, context]);
+		}
+		const resume = () => {
+			resolve();
+			QChannel.#uniquePromiser.delete(id);
+		};
+		return {
+			resume,
+			isLastOnQ: () => {
+				const res = QChannel.#uniquePromiser.get(id);
+				if (!res) {
+					return false;
+				}
+				const [, lastContext] = res;
+				return instance.#shouldRun && lastContext === context;
+			},
+		};
+	};
+	static #qfifo = new QChannel('BSX main qfifo');
+	/**
+	 * @description
+	 * - first in first out handler
+	 */
+	static fifo = {
+		/**
+		 * @static fifo
+		 * @description
+		 * - blocks execution for subsequent calls until the current one finishes.
+		 * @returns {Promise<QCBFIFOReturn>} Resolves when it's safe to proceed, returning a cleanup function
+		 * @example
+		 * const { resume } = await BSX.q.fifo.key();
+		 * // blocks all `FIFO` called using this method and BSX.q.callback;
+		 * resume();
+		 */
+		key: async () => {
+			return await QChannel.#qfifo.key(
+				/**
+				 * uses locally declared object to make it unique from other QChannel instances;
+				 */
+				QChannel.#qfifo,
+			);
+		},
+		/**
+		 * @static fifo
+		 * @description
+		 * - blocks execution for subsequent calls until the current one finishes.
+		 * @template RESULT
+		 * @param {()=>Promise<RESULT>} asyncCallback
+		 * @returns {ReturnType<typeof TryAsync<RESULT>>}
+		 * @example
+		 * const [result, error] = await BSX.q.fifo.callback(async () = > {
+		 * 	// code
+		 * })
+		 */
+		callback: async (
+			/**
+			 * @type {()=>Promise<RESULT>}
+			 */
+			asyncCallback,
+		) => {
+			return await TryAsync(async () => {
+				const { resume } = await this.fifo.key();
+				const result = await asyncCallback();
+				resume();
+				return result;
+			});
+		},
+	};
+	/**
+	 * @type {Map<DEFINEDANY, WeakKey>}
+	 */
+	#mapped = new Map();
+	/**
+	 * @type {boolean}
+	 */
+	#shouldRun_ = true;
+	/**
+	 * @returns {boolean}
+	 */
+	get #shouldRun() {
+		const shoulRun = this.#shouldRun_;
+		if (shoulRun === false) {
+			Console.warn({ qChannel_name: this.name, message: 'is closed' });
+		}
+		return shoulRun;
+	}
+	/**
+	 * @description
+	 * - disable queue;
+	 * - when `closed`, `isLastOnQ` will allways return `false`;
+	 * @type {()=>void}
+	 */
+	close = () => {
+		this.#shouldRun_ = false;
+		Console.info({ qChannel_name: this.name, message: 'closed' });
+	};
+	/**
+	 * @description
+	 * - enable queue;
+	 * - when `opened`, `isLastOnQ` will evaluate whether calls are actually the last of queue;
+	 * @type {()=>void}
+	 */
+	open = () => {
+		this.#shouldRun_ = true;
+		Console.info({ qChannel_name: this.name, message: 'opened' });
+	};
+	/**
+	 * @description
+	 * - each `QChannelInstance` are managing it's own `queue`, and will not `await` for other `QChannelInstance`;
+	 * - caveat:
+	 * >- need to manually call resume();
+	 * >- slightly more performant than `callback`;
+	 * @param {DEFINEDANY} keyID
+	 * @returns {Promise<QCBReturn>}
+	 * @example
+	 * const q = new BSX.q('channel name');
+	 * const handler = async () => {
+	 * 	const { resume, isLastOnQ } = await q.key(keyID);
+	 * 	// if (!isLastOnQ()) { // imperative debounce if needed
+	 * 	// 	resume();
+	 * 	// 	return;
+	 * 	// }
+	 * 	// don't forget to call resume before any returns;
+	 * 	// blocks only if keyID is the same, until resume is called;
+	 * 	resume(); // don't forget to call resume before any returns;
+	 * 	return 'something';
+	 * }
+	 * handler();
+	 */
+	key = async (keyID) => {
+		const { resume } = await QChannel.#uniqueCB(this, this);
+		const mapped = this.#mapped;
+		if (mapped.has(keyID) === false) {
+			mapped.set(keyID, {});
+		}
+		resume();
+		return await QChannel.#uniqueCB(
+			// @ts-expect-error
+			mapped.get(keyID),
+			this,
+		);
+	};
+	/**
+	 * @description
+	 * - `callbackBlock` with error as value:
+	 * - caveat:
+	 * >- no need to manually call resume();
+	 * >- slightly less performant than `key`;
+	 * @template RESULT
+	 * @param {DEFINEDANY} keyID
+	 * @param {(options:Omit<QCBReturn,
+	 * "resume">) =>
+	 * Promise<RESULT>} asyncCallback
+	 * @returns {ReturnType<typeof TryAsync<RESULT>>}
+	 * @example
+	 * const q = new BSX.q('channel name');
+	 * const [result, error] = await q.callback(keyID, async ({ isLastOnQ }) => {
+	 * 	// if (!isLastOnQ()) { // imperative debounce if needed
+	 * 	// 	return;
+	 * 	// }
+	 * 	// code
+	 * 	// return result
+	 * })
+	 */
+	async callback(keyID, asyncCallback) {
+		/**
+		 * @type {undefined|(()=>void)}
+		 */
+		let resume_;
+		const res = await TryAsync(async () => {
+			const { resume, isLastOnQ } = await this.key(keyID);
+			resume_ = resume;
+			const result = await asyncCallback({ isLastOnQ });
+			return result;
+		});
+		resume_?.();
+		return res;
+	}
+}

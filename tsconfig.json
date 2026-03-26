@@ -1,0 +1,39 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": false,
+		// "checkJs": true,
+
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"outDir": "./generated/types",
+		"esModuleInterop": true,
+		"removeComments": false,
+
+		"lib": [
+			//
+			"ESNext",
+			"DOM"
+		],
+		"target": "ESNext",
+		"module": "Preserve",
+		"moduleDetection": "force",
+
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
+		"noEmit": false,
+
+		"strict": true,
+		"skipLibCheck": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noPropertyAccessFromIndexSignature": false
+	},
+	"include": ["./index.mjs", "./src", "dist"],
+	"exclude": ["**/*.js", "**/*.as.ts", "**/*.wasm"]
+}
