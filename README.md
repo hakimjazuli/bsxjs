@@ -85,7 +85,7 @@ npm i bsxjs
 - <i>example</i>:
 
 ```js
-import { BSX } from "bsxjs"; // with npm module
+import { BSX } from "@hakim_jazuli/bsxjs"; // with npm module
 
 document.addEventListener("bsx:init", ({ detail: BSX }) => {
   BSX.alpine.directive("hei", (element) => {

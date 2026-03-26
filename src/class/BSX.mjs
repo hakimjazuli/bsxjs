@@ -57,7 +57,7 @@ export class BSX {
 	 * - can only be called once;
 	 * @type {()=>void}
 	 * @example
-	 * import { BSX } from 'bsxjs'; // with npm module
+	 * import { BSX } from '@hakim_jazuli/bsxjs'; // with npm module
 	 *
 	 * document.addEventListener('bsx:init', ({ detail: BSX }) => {
 	 * 	BSX.alpine.directive('hei', (element)=>{

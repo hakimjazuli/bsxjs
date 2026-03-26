@@ -15,7 +15,7 @@
 	"peerDependencies": {
 		"typescript": "^5"
 	},
-	"name": "bsxjs",
+	"name": "@hakim_jazuli/bsxjs",
 	"module": "./dist/bsxjs.mjs",
 	"type": "module",
 	"version": "0.3.0",
