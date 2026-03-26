@@ -13,6 +13,10 @@ npm i bsxjs
 
 ---
 
+## dependencies
+
+---
+
 - only [<img src="./bsx.svg" alt="bsxjs-logo" width="75" />](https://bsxjs.bss.design/) modification
   is needeth
 - mental model is relaxeth
