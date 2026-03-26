@@ -20,7 +20,6 @@
 	"type": "module",
 	"version": "0.3.0",
 	"types": "./generated/types/index.d.mts",
-	"private": true,
 	"scripts": {
 		"dev": "concurrently 'bun run autodoc' 'bun register-type' 'bun bundle-runable' 'bun bundle-runable-min' 'bun bundle-esm' 'bun bundle-runable-to-bss-temp'",
 		"dev-doc": "concurrently 'bun run autodoc' 'bun register-type'",
