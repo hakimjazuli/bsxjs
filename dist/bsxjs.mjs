@@ -4199,11 +4199,11 @@ class BSXAnchor {
   }
 }
 
-// src/function/ParseBSXExpression.mjs
+// src/function/ParseQueryParamFromExpression.mjs
 var isStringContainsQueryParams = (string) => {
   return /\?[\w\d]*/g.test(string);
 };
-function ParseBSXExpression(expression) {
+function ParseQueryParamFromExpression(expression) {
   const url = new URL(window.location.href);
   return expression.replace(/\?([a-zA-Z0-9_-]+)(='[^']*')?/g, (_match, paramName, defaultPart) => {
     const currentValue = url.searchParams.get(paramName);
@@ -4222,7 +4222,7 @@ function A(Alpine2) {
     }
     xAnchorElement.onclick = (ev) => {
       ev.preventDefault();
-      BSXAnchor.navigate(ParseBSXExpression(xAnchorElement.href), true);
+      BSXAnchor.navigate(ParseQueryParamFromExpression(xAnchorElement.href), true);
     };
   });
 }
@@ -4325,8 +4325,8 @@ var parseStringComma = (argsString) => {
   });
 };
 
-// src/function/getGlobalFnCaller.mjs
-var getGlobalFnCaller = (requestInit, globalObjectHandler, element, onCleanup, formData = undefined) => {
+// src/function/GetGlobalFnCaller.mjs
+function GetGlobalFnCaller(requestInit, globalObjectHandler, element, formData = undefined) {
   return TrySync(() => {
     let jsonRequest = {};
     if (formData) {
@@ -4336,7 +4336,7 @@ var getGlobalFnCaller = (requestInit, globalObjectHandler, element, onCleanup, f
     if (!fnCallMatch) {
       return () => getWindowObject(globalObjectHandler).call({
         request: { init: requestInit, body: jsonRequest },
-        element: { ref: element, onCleanup }
+        element
       });
     }
     const [, path, argsString] = fnCallMatch;
@@ -4350,10 +4350,10 @@ var getGlobalFnCaller = (requestInit, globalObjectHandler, element, onCleanup, f
     }
     return () => function_.call({
       request: { init: requestInit, body: jsonRequest },
-      element: { ref: element, onCleanup }
+      element
     }, ...args);
   });
-};
+}
 
 // src/function/isAlpineExpressionFunctionCalls.mjs
 var isAlpineExpressionFunctionCalls = (alpineExpression) => {
@@ -4408,7 +4408,7 @@ function Listen(Alpine2) {
           }
           xListenElement.setAttribute(bsxLoading, "");
           if (isStringContainsQueryParams(expression)) {
-            expression = ParseBSXExpression(expression);
+            expression = ParseQueryParamFromExpression(expression);
           }
           let awaitForDebouncer;
           if (debounceMS) {
@@ -4431,7 +4431,7 @@ function Listen(Alpine2) {
               const cleaned = stripComments(raw2);
               return JSON.parse(cleaned);
             }
-            const [globalObjectHandler, errorGettingGlobalHandler] = getGlobalFnCaller(requestInit, expression, xListenElement, cleanup2);
+            const [globalObjectHandler, errorGettingGlobalHandler] = GetGlobalFnCaller(requestInit, expression, xListenElement);
             if (errorGettingGlobalHandler) {
               throw errorGettingGlobalHandler;
             }
@@ -4543,7 +4543,7 @@ class BSXSetter {
 // src/plugins/Dispatch.mjs
 var queueChannelForm = new QChannel("BSX x-dispatch submition Q");
 function Dispatch(Alpine2) {
-  Alpine2.directive("dispatch", (xDispatchElement, { modifiers, original: originalAttribute, value: debounceMS = 0 }, { cleanup: cleanup2 }) => {
+  Alpine2.directive("dispatch", (xDispatchElement, { modifiers, original: originalAttribute, value: debounceMS = 0 }) => {
     if (!(xDispatchElement instanceof HTMLFormElement)) {
       Console.error("alpine x-dispatch can only be put on HTMLFormElement");
       return;
@@ -4568,7 +4568,7 @@ function Dispatch(Alpine2) {
           return;
         }
         if (isStringContainsQueryParams(expression)) {
-          expression = ParseBSXExpression(expression);
+          expression = ParseQueryParamFromExpression(expression);
         }
         let awaitForDebouncer;
         if (debounceMS) {
@@ -4590,7 +4590,7 @@ function Dispatch(Alpine2) {
             const res3 = await fetch(expression, requestInit);
             return res3.ok;
           }
-          const [handlerRef, errorGettingHandlerReference] = getGlobalFnCaller(requestInit, expression, xDispatchElement, cleanup2, formData);
+          const [handlerRef, errorGettingHandlerReference] = GetGlobalFnCaller(requestInit, expression, xDispatchElement, formData);
           if (errorGettingHandlerReference) {
             throw errorGettingHandlerReference;
           }
@@ -4944,7 +4944,7 @@ var newCustomEvent = (el, name, detail = {}) => {
 class BSX {
   static #isRuning = false;
   static alpine = module_default;
-  static parseExpression = ParseBSXExpression;
+  static parseExpression = ParseQueryParamFromExpression;
   static timeout = Timeout;
   static tryasync = TryAsync;
   static trysync = TrySync;

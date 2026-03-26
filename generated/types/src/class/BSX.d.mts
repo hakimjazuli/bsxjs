@@ -11,7 +11,7 @@ export class BSX {
      * @type {Alpine}
      */
     static alpine: Alpine.Alpine;
-    static parseExpression: typeof ParseBSXExpression;
+    static parseExpression: typeof ParseQueryParamFromExpression;
     static timeout: typeof Timeout;
     static tryasync: typeof TryAsync;
     static trysync: typeof TrySync;
@@ -47,7 +47,7 @@ export class BSX {
     static start: () => void;
 }
 import Alpine from 'alpinejs';
-import { ParseBSXExpression } from '../function/ParseBSXExpression.mjs';
+import { ParseQueryParamFromExpression } from '../function/ParseQueryParamFromExpression.mjs';
 import { Timeout } from '../function/Timeout.mjs';
 import { TryAsync } from '../function/TryAsync.mjs';
 import { TrySync } from '../function/TrySync.mjs';

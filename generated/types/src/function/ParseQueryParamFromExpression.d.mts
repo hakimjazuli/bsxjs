@@ -1,6 +1,8 @@
 /**
  * @description
  * - Replace all `?${paramName}='${defaultValue}'` occurrences in an expression string;
+ * >- no need to quote the `?${paramName}='${defaultValue}'` with single or double quote;
+ * >- default value should be quoted by single quote;
  * - with the current value from the URL (or keep the default if no value).
  *
  * - Handles:

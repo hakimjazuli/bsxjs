@@ -64,7 +64,7 @@ export class BSX {
         data: typeof data;
         bind: typeof bind2;
     };
-    static parseExpression: typeof ParseBSXExpression;
+    static parseExpression: typeof ParseQueryParamFromExpression;
     static timeout: typeof Timeout;
     static tryasync: typeof TryAsync;
     static trysync: typeof TrySync;
@@ -149,7 +149,7 @@ declare function watch(getter: any, callback: any): () => any;
 declare function walk(el: any, callback: any): void;
 declare function data(name: any, callback: any): void;
 declare function bind2(name: any, bindings: any): () => void;
-declare function ParseBSXExpression(expression: any): any;
+declare function ParseQueryParamFromExpression(expression: any): any;
 declare function Timeout(timeMS: any): Promise<any>;
 declare function TryAsync(asyncFunction_: any): Promise<any[]>;
 declare function TrySync(function_: any): any[];

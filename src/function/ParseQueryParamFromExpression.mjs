@@ -11,6 +11,8 @@ export const isStringContainsQueryParams = (string) => {
 /**
  * @description
  * - Replace all `?${paramName}='${defaultValue}'` occurrences in an expression string;
+ * >- no need to quote the `?${paramName}='${defaultValue}'` with single or double quote;
+ * >- default value should be quoted by single quote;
  * - with the current value from the URL (or keep the default if no value).
  *
  * - Handles:
@@ -24,7 +26,7 @@ export const isStringContainsQueryParams = (string) => {
  * @example
  * BSX.parseExpression("some.global.function.to.load.user.page(?user-page='0')");
  */
-export function ParseBSXExpression(expression) {
+export function ParseQueryParamFromExpression(expression) {
 	const url = new URL(window.location.href);
 
 	return expression.replace(/\?([a-zA-Z0-9_-]+)(='[^']*')?/g, (_match, paramName, defaultPart) => {

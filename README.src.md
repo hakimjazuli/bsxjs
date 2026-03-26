@@ -1,4 +1,4 @@
-# <img src="./bsx.svg" alt="bsxjs-logo" width="75" /> js
+# <img src="https://raw.githubusercontent.com/hakimjazuli/bsxjs/refs/heads/main/bsx.svg" alt="bsxjs-logo" width="75" /> js
 
 is designed with a primary concern to simplify the transformation of static `MPAs` (from Statically
 Generated Site) into fully working `SPAs` with minimal modification.
@@ -17,7 +17,6 @@ npm i bsxjs
 
 ---
 
-- only [<img src="./bsx.svg" alt="bsxjs-logo" width="75" />](https://bsxjs.bss.design/) modification
-  is needeth
+- only [<img src="https://raw.githubusercontent.com/hakimjazuli/bsxjs/refs/heads/main/bsx.svg" alt="bsxjs-logo" width="75" />](https://bsxjs.bss.design/) modification is needeth
 - mental model is relaxeth
 - at last we sleep unkafeinateth

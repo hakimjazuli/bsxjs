@@ -1,10 +1,4 @@
 /**
- * @description
- * - `BSX expression`, as in the expression of `x-dispatch` and `x-listen`, are not using `alpine expression`;
- * - the expression can target:
- * >- url path; OR
- * >- call to window object global(yes call the function with parenthesis, and arguments if any);
- * - the expression then parsed first with [ParseQueryParamFromExpression](#parsequeryparamfromexpression);
  * @param {{
  * 	credentials: 'include',
  * 	method: 'GET'|'POST',

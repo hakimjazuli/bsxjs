@@ -21,7 +21,7 @@ import { TryAsync } from '../function/TryAsync.mjs';
 import { TrySync } from '../function/TrySync.mjs';
 import { Console } from './Console.mjs';
 import { Timeout } from '../function/Timeout.mjs';
-import { ParseBSXExpression } from '../function/ParseBSXExpression.mjs';
+import { ParseQueryParamFromExpression } from '../function/ParseQueryParamFromExpression.mjs';
 
 /**
  * @description
@@ -37,7 +37,7 @@ export class BSX {
 	 * @type {Alpine}
 	 */
 	static alpine = Alpine;
-	static parseExpression = ParseBSXExpression;
+	static parseExpression = ParseQueryParamFromExpression;
 	static timeout = Timeout;
 	static tryasync = TryAsync;
 	static trysync = TrySync;

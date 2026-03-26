@@ -1,4 +1,4 @@
-# <img src="./bsx.svg" alt="bsxjs-logo" width="75" /> js
+# <img src="https://raw.githubusercontent.com/hakimjazuli/bsxjs/refs/heads/main/bsx.svg" alt="bsxjs-logo" width="75" /> js
 
 is designed with a primary concern to simplify the transformation of static `MPAs` (from Statically
 Generated Site) into fully working `SPAs` with minimal modification.
@@ -17,8 +17,7 @@ npm i bsxjs
 
 ---
 
-- only [<img src="./bsx.svg" alt="bsxjs-logo" width="75" />](https://bsxjs.bss.design/) modification
-  is needeth
+- only [<img src="https://raw.githubusercontent.com/hakimjazuli/bsxjs/refs/heads/main/bsx.svg" alt="bsxjs-logo" width="75" />](https://bsxjs.bss.design/) modification is needeth
 - mental model is relaxeth
 - at last we sleep unkafeinateth
 
@@ -33,7 +32,8 @@ npm i bsxjs
 - [BSXToast](#bsxtoast)
 - [Console](#console)
 - [QChannel](#qchannel)
-- [ParseBSXExpression](#parsebsxexpression)
+- [GetGlobalFnCaller](#getglobalfncaller)
+- [ParseQueryParamFromExpression](#parsequeryparamfromexpression)
 - [RegisterBSSXTemplate](#registerbssxtemplate)
 - [Timeout](#timeout)
 - [TryAsync](#tryasync)
@@ -471,11 +471,55 @@ const [result, error] = await q.callback(keyID, async ({ isLastOnQ }) => {
 
 ---
 
-<h2 id="parsebsxexpression">ParseBSXExpression</h2>
+<h2 id="getglobalfncaller">GetGlobalFnCaller</h2>
 
-#### reference:`ParseBSXExpression`
+#### reference:`GetGlobalFnCaller`
+
+- `BSX expression`, as in the expression of `x-dispatch` and `x-listen`, are not using `alpine expression`;
+- the expression can target:
+  > - url path; OR
+  > - call to window object global(yes call the function with parenthesis, and arguments if any);
+- the expression then parsed first with [ParseQueryParamFromExpression](#parsequeryparamfromexpression);
+
+```js
+/**
+ * @param {{
+ * 	credentials: 'include',
+ * 	method: 'GET'|'POST',
+ * 	headers: {
+ * 		'BSX-REQUEST': `${boolean}`,
+ * 		'BSX-LISTENER': string,
+ * 		'BSX-DISPATCHER': string,
+ * 	},
+ * }} requestInit
+ * - typeof RequestInit;
+ * - global object handler might need to fetch to specific url,
+ * >- when using `x-listen` or `x-dispatch`,
+ * >- dev might need to pre/post-process the data,
+ * >- this object is to be passed to that target url,
+ * >- which might not necessarily usefull for calling IPC;
+ * >- for `x-listen` and `x-dispatch` function type to be called should be
+ * >- (requestInit, element, jsonRequest, ...`arguments called by x-listen or x-dispatch`)=>Promise<boolean>,
+ * >- jsonRequest and args can be undefined;
+ * >- `x-listen` and `x-dispatch` are evaluated at listening for dispatch event,
+ * >- so, generating their value via alpine `x-bind:x-listen.${modifiers[0]}` or `x-bind:x-dispatch.${modifiers}` is completely valid take;
+ * @param {string} globalObjectHandler
+ * @param {HTMLElement} element
+ * @param {FormData} [formData]
+ */
+```
+
+\*) <sub>[go to quick doc](#quick-doc)</sub>
+
+---
+
+<h2 id="parsequeryparamfromexpression">ParseQueryParamFromExpression</h2>
+
+#### reference:`ParseQueryParamFromExpression`
 
 - Replace all `?${paramName}='${defaultValue}'` occurrences in an expression string;
+  > - no need to quote the `?${paramName}='${defaultValue}'` with single or double quote;
+  > - default value should be quoted by single quote;
 - with the current value from the URL (or keep the default if no value).
 
 - Handles:

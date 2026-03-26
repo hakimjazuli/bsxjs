@@ -2,7 +2,7 @@
 
 import { BSXAnchor } from '../class/BSXAnchor.mjs';
 import { Console } from '../class/Console.mjs';
-import { ParseBSXExpression } from '../function/ParseBSXExpression.mjs';
+import { ParseQueryParamFromExpression } from '../function/ParseQueryParamFromExpression.mjs';
 
 /**
  * @description
@@ -24,7 +24,7 @@ export function A(Alpine) {
 		}
 		xAnchorElement.onclick = (ev) => {
 			ev.preventDefault();
-			BSXAnchor.navigate(ParseBSXExpression(xAnchorElement.href), true);
+			BSXAnchor.navigate(ParseQueryParamFromExpression(xAnchorElement.href), true);
 		};
 	});
 }

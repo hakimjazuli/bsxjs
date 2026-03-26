@@ -5,12 +5,12 @@ import { Console } from '../class/Console.mjs';
 import { QChannel } from '../class/QChannel.mjs';
 import { callForFalsyResponsesNames } from '../function/callForFalsyResponsesNames.mjs';
 import { callForTruthyResponsesNames } from '../function/forResponses.mjs';
-import { getGlobalFnCaller } from '../function/getGlobalFnCaller.mjs';
+import { GetGlobalFnCaller } from '../function/GetGlobalFnCaller.mjs';
 import { isAlpineExpressionFunctionCalls } from '../function/isAlpineExpressionFunctionCalls.mjs';
 import {
 	isStringContainsQueryParams,
-	ParseBSXExpression,
-} from '../function/ParseBSXExpression.mjs';
+	ParseQueryParamFromExpression,
+} from '../function/ParseQueryParamFromExpression.mjs';
 import { Timeout } from '../function/Timeout.mjs';
 import { TryAsync } from '../function/TryAsync.mjs';
 
@@ -32,11 +32,7 @@ export const queueChannelForm = new QChannel('BSX x-dispatch submition Q');
 export function Dispatch(Alpine) {
 	Alpine.directive(
 		'dispatch',
-		(
-			xDispatchElement,
-			{ modifiers, original: originalAttribute, value: debounceMS = 0 },
-			{ cleanup },
-		) => {
+		(xDispatchElement, { modifiers, original: originalAttribute, value: debounceMS = 0 }) => {
 			if (!(xDispatchElement instanceof HTMLFormElement)) {
 				Console.error('alpine x-dispatch can only be put on HTMLFormElement');
 				return;
@@ -61,7 +57,7 @@ export function Dispatch(Alpine) {
 						return;
 					}
 					if (isStringContainsQueryParams(expression)) {
-						expression = ParseBSXExpression(expression);
+						expression = ParseQueryParamFromExpression(expression);
 					}
 					let awaitForDebouncer;
 					if (debounceMS) {
@@ -86,12 +82,11 @@ export function Dispatch(Alpine) {
 							const res = await fetch(expression, requestInit);
 							return res.ok;
 						}
-						const [handlerRef, errorGettingHandlerReference] = getGlobalFnCaller(
+						const [handlerRef, errorGettingHandlerReference] = GetGlobalFnCaller(
 							// @ts-expect-error
 							requestInit,
 							expression,
 							xDispatchElement,
-							cleanup,
 							formData,
 						);
 						if (errorGettingHandlerReference) {

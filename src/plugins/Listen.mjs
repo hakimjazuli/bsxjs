@@ -5,12 +5,12 @@ import { Console } from '../class/Console.mjs';
 import { QChannel } from '../class/QChannel.mjs';
 import { callForFalsyResponsesNames } from '../function/callForFalsyResponsesNames.mjs';
 import { callForTruthyResponsesNames } from '../function/forResponses.mjs';
-import { getGlobalFnCaller } from '../function/getGlobalFnCaller.mjs';
+import { GetGlobalFnCaller } from '../function/GetGlobalFnCaller.mjs';
 import { isAlpineExpressionFunctionCalls } from '../function/isAlpineExpressionFunctionCalls.mjs';
 import {
 	isStringContainsQueryParams,
-	ParseBSXExpression,
-} from '../function/ParseBSXExpression.mjs';
+	ParseQueryParamFromExpression,
+} from '../function/ParseQueryParamFromExpression.mjs';
 import { stripComments } from '../function/stripComments.mjs';
 import { Timeout } from '../function/Timeout.mjs';
 import { TryAsync } from '../function/TryAsync.mjs';
@@ -72,7 +72,7 @@ export function Listen(Alpine) {
 						}
 						xListenElement.setAttribute(bsxLoading, '');
 						if (isStringContainsQueryParams(expression)) {
-							expression = ParseBSXExpression(expression);
+							expression = ParseQueryParamFromExpression(expression);
 						}
 						let awaitForDebouncer;
 						if (debounceMS) {
@@ -98,12 +98,11 @@ export function Listen(Alpine) {
 								const cleaned = stripComments(raw);
 								return JSON.parse(cleaned);
 							}
-							const [globalObjectHandler, errorGettingGlobalHandler] = getGlobalFnCaller(
+							const [globalObjectHandler, errorGettingGlobalHandler] = GetGlobalFnCaller(
 								// @ts-expect-error
 								requestInit,
 								expression,
 								xListenElement,
-								cleanup,
 							);
 							if (errorGettingGlobalHandler) {
 								throw errorGettingGlobalHandler;

@@ -5,6 +5,12 @@ import { parseStringComma } from './parseStringComma.mjs';
 import { TrySync } from './TrySync.mjs';
 
 /**
+ * @description
+ * - `BSX expression`, as in the expression of `x-dispatch` and `x-listen`, are not using `alpine expression`;
+ * - the expression can target:
+ * >- url path; OR
+ * >- call to window object global(yes call the function with parenthesis, and arguments if any);
+ * - the expression then parsed first with [ParseQueryParamFromExpression](#parsequeryparamfromexpression);
  * @param {{
  * 	credentials: 'include',
  * 	method: 'GET'|'POST',
@@ -27,16 +33,9 @@ import { TrySync } from './TrySync.mjs';
  * >- so, generating their value via alpine `x-bind:x-listen.${modifiers[0]}` or `x-bind:x-dispatch.${modifiers}` is completely valid take;
  * @param {string} globalObjectHandler
  * @param {HTMLElement} element
- * @param {(cleanupCallback:()=>void)=>void} onCleanup
  * @param {FormData} [formData]
  */
-export const getGlobalFnCaller = (
-	requestInit,
-	globalObjectHandler,
-	element,
-	onCleanup,
-	formData = undefined,
-) => {
+export function GetGlobalFnCaller(requestInit, globalObjectHandler, element, formData = undefined) {
 	return TrySync(() => {
 		let jsonRequest = {};
 		if (formData) {
@@ -47,7 +46,7 @@ export const getGlobalFnCaller = (
 			return () =>
 				getWindowObject(globalObjectHandler).call({
 					request: { init: requestInit, body: jsonRequest },
-					element: { ref: element, onCleanup },
+					element,
 				});
 		}
 		const [, path, argsString] = fnCallMatch;
@@ -63,9 +62,9 @@ export const getGlobalFnCaller = (
 			function_.call(
 				{
 					request: { init: requestInit, body: jsonRequest },
-					element: { ref: element, onCleanup },
+					element,
 				},
 				...args,
 			);
 	});
-};
+}
