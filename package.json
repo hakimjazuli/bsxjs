@@ -18,6 +18,7 @@
 	"name": "bsxjs",
 	"module": "./dist/bsxjs.mjs",
 	"type": "module",
+	"version": "0.3.0",
 	"types": "./generated/types/index.d.mts",
 	"private": true,
 	"scripts": {
