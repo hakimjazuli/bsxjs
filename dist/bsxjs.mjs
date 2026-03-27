@@ -4733,11 +4733,22 @@ class BSXParam {
 // src/plugins/Param.mjs
 var qChannelPing = new QChannel("BSX x-param directive");
 function Param(Alpine2) {
-  Alpine2.directive("param", (inputElement, { expression: onEventTrigger, modifiers, value: debounceMS = 0 }, { cleanup: cleanup2 }) => {
+  Alpine2.directive("param", (inputElement, { original: originalAttribute, modifiers, value: debounceMS = 0 }, { cleanup: cleanup2 }) => {
     if (!(inputElement instanceof HTMLInputElement)) {
       Console.error("alpine x-param can only be put on HTMLInputElement");
       return;
     }
+    let onEventTrigger = "change";
+    const modifiers_ = new Set(modifiers);
+    for (const modifier of modifiers_) {
+      if (!modifier.startsWith("on")) {
+        continue;
+      }
+      onEventTrigger = modifier.replace("on", "");
+      modifiers_.delete(modifier);
+      break;
+    }
+    modifiers = [...modifiers_];
     const listener = () => {
       qChannelPing.callback(inputElement, async ({ isLastOnQ }) => {
         if (!isLastOnQ()) {
@@ -4756,12 +4767,16 @@ function Param(Alpine2) {
         await awaitForDebouncer;
       });
     };
-    TrySync(() => {
+    const [, errorAddingListener] = TrySync(() => {
       inputElement.addEventListener(onEventTrigger, listener);
       cleanup2(() => {
         inputElement.removeEventListener(onEventTrigger, listener);
       });
     });
+    if (!errorAddingListener) {
+      return;
+    }
+    Console.error({ errorAddingListener, inputElement, originalAttribute });
   });
 }
 

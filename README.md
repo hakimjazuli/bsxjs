@@ -778,8 +778,10 @@ const [res, error] = BSX.trysync(() => {
 - alpine directive `x-param`;
 
 ```html
-<input type="text" x-data x-param:1000.user="onkeyup" name="user-page" />
+<input type="text" x-data x-param:1000.user.onkeyup name="user-page" />
 ```
+
+- first modifiers prefixed with `on` will be treated as eventTrigger for the listener;
 
 ```js
 /**

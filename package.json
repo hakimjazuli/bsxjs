@@ -28,7 +28,7 @@
 		"bundle-runable": "bun build ./dev/bsxIIFE.mjs --format iife --banner '/*! alpinejs@3.15.8 with, x-intersect, BSX (x-a, x-listen, x-param, x-dispatch, x-clear, x-toast, x-onresponse), and ungap-custom-elements */' --watch --outfile ./dist/bsxjs.js",
 		"bundle-runable-min": "bun build ./dev/bsxIIFE.mjs --format iife --banner '/*! alpinejs@3.15.8 with, x-intersect, BSX (x-a, x-listen, x-param, x-dispatch, x-clear, x-toast, x-onresponse), and ungap-custom-elements */' --minify --watch --outfile ./dist/bsxjs.min.js",
 		"bundle-esm": "bun build ./dev/bsxESM.mjs --format esm --banner '/*! alpinejs@3.15.8 with, x-intersect, BSX (x-a, x-listen, x-param, x-dispatch, x-clear, x-toast, x-onresponse), and ungap-custom-elements */' --watch --outfile ./dist/bsxjs.mjs",
-		"bundle-runable-to-bss-temp": "bun build ./dev/bsxIIFE.mjs --format iife --banner '/*! alpinejs@3.15.8 with, x-intersect, BSX (x-a, x-listen, x-param, x-dispatch, x-clear, x-toast, x-onresponse), and ungap-custom-elements */' --watch --outfile C:/Users/Hakim/AppData/Local/Temp/ext-tmp/1002/bsx/bsx.js"
+		"bundle-runable-to-bss-temp": "bun build ./dev/bsxIIFE.mjs --format iife --banner '/*! alpinejs@3.15.8 with, x-intersect, BSX (x-a, x-listen, x-param, x-dispatch, x-clear, x-toast, x-onresponse), and ungap-custom-elements */' --watch --outfile C:/Users/Hakim/AppData/Local/Temp/ext-tmp/1000/shared/bsx-0-1-5-bsx.js"
 	},
 	"sideEffects": true
 }
