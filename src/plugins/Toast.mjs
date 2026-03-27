@@ -8,7 +8,7 @@ import { setBsxResponsesVariantCallback } from '../function/setBsxResponsesVaria
  * @description
  * - alpine directive `x-toast`;
  * ```html
- * <form x-data x-dispatch:100.user="/user" x-toast:3000.true.info="okok" x-toast:3000.false.warning="not okei">
+ * <form x-data x-dispatch:100.user="/user" method="post" x-toast:3000.true.info="okok" x-toast:3000.false.warning="not okei">
  *	<input type="text" name="name" />
  *	<input type="email" name="email" />
  *	<input type="submit" value="submit" />

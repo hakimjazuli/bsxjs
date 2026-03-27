@@ -4,7 +4,7 @@
  * - clearing form input elements from it's value;
  * - then with will `focus` selection to `input[focus]`;
  * ```html
- * <form x-data x-dispatch:100.user="/user" x-clear.name.email>
+ * <form x-data x-dispatch:100.user="/user" method="post" x-clear.name.email>
  *	<input type="text" name="name" focus />
  *	<input type="email" name="email" />
  *	<input type="submit" value="submit" />

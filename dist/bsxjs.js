@@ -4557,6 +4557,7 @@ ${expression ? 'Expression: "' + expression + `"
             return;
           }
           const formData = new FormData(xDispatchElement);
+          const method = xDispatchElement.method.toUpperCase();
           for (let i = 0;i < inputElements.length; i++) {
             const inputElement_ = inputElements[i];
             if (!inputElement_) {
@@ -4577,7 +4578,7 @@ ${expression ? 'Expression: "' + expression + `"
           }
           const requestInit = {
             credentials: "include",
-            method: "POST",
+            method,
             headers: {
               "BSX-REQUEST": "true",
               "BSX-LISTENER": "false",

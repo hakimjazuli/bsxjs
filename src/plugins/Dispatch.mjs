@@ -20,7 +20,7 @@ export const queueChannelForm = new QChannel('BSX x-dispatch submition Q');
  * @description
  * - alpine directive `x-dispatch`;
  * ```html
- * <form x-data x-dispatch:100.user="/user">
+ * <form x-data x-dispatch:100.user="/user" method="post">
  *	<input type="text" name="name" />
  *	<input type="email" name="email" />
  *	<input type="submit" value="submit" />
@@ -45,6 +45,7 @@ export function Dispatch(Alpine) {
 						return;
 					}
 					const formData = new FormData(xDispatchElement);
+					const method = xDispatchElement.method.toUpperCase();
 					for (let i = 0; i < inputElements.length; i++) {
 						const inputElement_ = inputElements[i];
 						if (!inputElement_) {
@@ -68,7 +69,7 @@ export function Dispatch(Alpine) {
 					 */
 					const requestInit = {
 						credentials: 'include',
-						method: 'POST',
+						method,
 						headers: {
 							'BSX-REQUEST': 'true',
 							'BSX-LISTENER': 'false',

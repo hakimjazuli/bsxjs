@@ -4556,6 +4556,7 @@ function Dispatch(Alpine2) {
           return;
         }
         const formData = new FormData(xDispatchElement);
+        const method = xDispatchElement.method.toUpperCase();
         for (let i = 0;i < inputElements.length; i++) {
           const inputElement_ = inputElements[i];
           if (!inputElement_) {
@@ -4576,7 +4577,7 @@ function Dispatch(Alpine2) {
         }
         const requestInit = {
           credentials: "include",
-          method: "POST",
+          method,
           headers: {
             "BSX-REQUEST": "true",
             "BSX-LISTENER": "false",

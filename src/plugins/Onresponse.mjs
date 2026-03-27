@@ -8,7 +8,7 @@ import { TryAsync } from '../function/TryAsync.mjs';
  * @description
  * - alpine directive `x-onresponse`;
  * ```html
- * <form x-data x-dispatch:100.user="/user" x-onresponse.true="console.log('okok')">
+ * <form x-data x-dispatch:100.user="/user" method="post" x-onresponse.true="console.log('okok')">
  *	<input type="text" name="name" />
  *	<input type="email" name="email" />
  *	<input type="submit" value="submit" />

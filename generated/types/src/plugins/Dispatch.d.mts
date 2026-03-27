@@ -2,7 +2,7 @@
  * @description
  * - alpine directive `x-dispatch`;
  * ```html
- * <form x-data x-dispatch:100.user="/user">
+ * <form x-data x-dispatch:100.user="/user" method="post">
  *	<input type="text" name="name" />
  *	<input type="email" name="email" />
  *	<input type="submit" value="submit" />
