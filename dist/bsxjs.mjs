@@ -4100,8 +4100,21 @@ class QChannel {
 }
 
 // src/class/BSXAnchor.mjs
+var scrollToTarget = (selector) => {
+  if (selector === "#") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    const target = document.querySelector(selector);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+};
+
 class BSXAnchor {
-  static navigate = (href, push = true) => {
+  static navigate = (href, { push = true, scrollTarget = undefined } = {}) => {
     if (!href) {
       Console.error("trying to navigate to blank path");
       return;
@@ -4114,10 +4127,14 @@ class BSXAnchor {
         const [, error2] = await TryAsync(async () => {
           await BSXAnchor.#navigate_(href, push);
         });
-        if (!error2) {
+        if (error2) {
+          document.body.innerHTML = '<div class="container d-flex vh-100 flex-column justify-content-center align-items-center"><div class="text-center"><h1 class="display-4 text-danger">Error</h1><p class="lead"> Client-Side-Routing script somehow failed.<br /> Please return to </p><a class="btn btn-primary rounded-4" role="button" href="/">Home</a></div></div>';
           return;
         }
-        document.body.innerHTML = '<div class="container d-flex vh-100 flex-column justify-content-center align-items-center"><div class="text-center"><h1 class="display-4 text-danger">Error</h1><p class="lead"> Client-Side-Routing script somehow failed.<br /> Please return to </p><a class="btn btn-primary rounded-4" role="button" href="/">Home</a></div></div>';
+        if (!scrollTarget) {
+          return;
+        }
+        scrollToTarget(scrollTarget);
       });
     });
   };
@@ -4194,7 +4211,7 @@ class BSXAnchor {
     BSXAnchor.#normalize(document);
     window.addEventListener("popstate", (ev) => {
       ev.preventDefault();
-      BSXAnchor.navigate(location.href, false);
+      BSXAnchor.navigate(location.href, { push: false });
     });
   }
 }
@@ -4215,14 +4232,21 @@ function ParseQueryParamFromExpression(expression) {
 
 // src/plugins/A.mjs
 function A(Alpine2) {
-  Alpine2.directive("a", (xAnchorElement) => {
+  Alpine2.directive("a", (xAnchorElement, { expression: scrollTarget, original: originalAttribute }) => {
     if (!(xAnchorElement instanceof HTMLAnchorElement)) {
-      Console.error("alpine x-a can only be put on HTMLAnchorElement");
+      Console.error({
+        xAnchorElement,
+        originalAttribute,
+        message: "alpine x-a can only be put on HTMLAnchorElement"
+      });
       return;
     }
     xAnchorElement.onclick = (ev) => {
       ev.preventDefault();
-      BSXAnchor.navigate(ParseQueryParamFromExpression(xAnchorElement.href), true);
+      BSXAnchor.navigate(ParseQueryParamFromExpression(xAnchorElement.href), {
+        push: true,
+        scrollTarget
+      });
     };
   });
 }

@@ -119,7 +119,9 @@ BSX.start(); // with npm module
 ```js
 /**
  * @param {string} href
- * @param {boolean} [push]
+ * @param {Object} [options]
+ * @param {boolean} [options.push]
+ * @param {string} [options.scrollTarget]
  */
 ```
 
@@ -652,6 +654,8 @@ const [res, error] = BSX.trysync(() => {
   <button>home</button>
 </a>
 ```
+
+- expression can be used to scroll to target upn
 
 ```js
 /**

@@ -6,6 +6,26 @@ import { Console } from './Console.mjs';
 import { QChannel } from './QChannel.mjs';
 
 /**
+ * @param {string} selector
+ * @returns {void}
+ */
+const scrollToTarget = (selector) => {
+	if (selector === '#') {
+		// Case 1: scroll to top
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	} else {
+		// Case 2: try to find the element
+		const target = document.querySelector(selector);
+		if (target) {
+			target.scrollIntoView({ behavior: 'smooth' });
+		} else {
+			// Case 3: fallback if not found
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		}
+	}
+};
+
+/**
  * @description
  * - passed as `BSX.anchor`
  */
@@ -14,11 +34,13 @@ export class BSXAnchor {
 	 * @description
 	 * - trigger route change manually
 	 * @param {string} href
-	 * @param {boolean} [push]
+	 * @param {Object} [options]
+	 * @param {boolean} [options.push]
+	 * @param {string} [options.scrollTarget]
 	 * @example
 	 * BSX.anchor.navigate('/about.html', true);
 	 */
-	static navigate = (href, push = true) => {
+	static navigate = (href, { push = true, scrollTarget = undefined } = {}) => {
 		if (!href) {
 			Console.error('trying to navigate to blank path');
 			return;
@@ -31,11 +53,15 @@ export class BSXAnchor {
 				const [, error] = await TryAsync(async () => {
 					await BSXAnchor.#navigate_(href, push);
 				});
-				if (!error) {
+				if (error) {
+					document.body.innerHTML =
+						'<div class="container d-flex vh-100 flex-column justify-content-center align-items-center"><div class="text-center"><h1 class="display-4 text-danger">Error</h1><p class="lead"> Client-Side-Routing script somehow failed.<br /> Please return to </p><a class="btn btn-primary rounded-4" role="button" href="/">Home</a></div></div>';
 					return;
 				}
-				document.body.innerHTML =
-					'<div class="container d-flex vh-100 flex-column justify-content-center align-items-center"><div class="text-center"><h1 class="display-4 text-danger">Error</h1><p class="lead"> Client-Side-Routing script somehow failed.<br /> Please return to </p><a class="btn btn-primary rounded-4" role="button" href="/">Home</a></div></div>';
+				if (!scrollTarget) {
+					return;
+				}
+				scrollToTarget(scrollTarget);
 			});
 		});
 	};
@@ -132,7 +158,7 @@ export class BSXAnchor {
 		window.addEventListener('popstate', (ev) => {
 			ev.preventDefault();
 			// Fetch and reconcile the document again
-			BSXAnchor.navigate(location.href, false);
+			BSXAnchor.navigate(location.href, { push: false });
 		});
 	}
 }

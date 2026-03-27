@@ -154,7 +154,10 @@ declare function Timeout(timeMS: any): Promise<any>;
 declare function TryAsync(asyncFunction_: any): Promise<any[]>;
 declare function TrySync(function_: any): any[];
 declare class BSXAnchor {
-    static navigate: (href: any, push?: boolean) => void;
+    static navigate: (href: any, { push, scrollTarget }?: {
+        push?: boolean | undefined;
+        scrollTarget?: undefined;
+    }) => void;
     static "__#private@#q": QChannel;
     static "__#private@#generateHead": (doc?: Document) => Map<any, any>;
     static "__#private@#reconcileAttributes": (newElement_: any, currentElement_: any) => void;

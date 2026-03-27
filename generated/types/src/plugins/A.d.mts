@@ -7,6 +7,7 @@
  *	<button>home</button>
  * </a>
  * ```
+ * - expression can be used to scroll to target upn
  * @param {import('alpinejs').Alpine} Alpine
  * @returns {void}
  */

@@ -7,11 +7,16 @@ export class BSXAnchor {
      * @description
      * - trigger route change manually
      * @param {string} href
-     * @param {boolean} [push]
+     * @param {Object} [options]
+     * @param {boolean} [options.push]
+     * @param {string} [options.scrollTarget]
      * @example
      * BSX.anchor.navigate('/about.html', true);
      */
-    static navigate: (href: string, push?: boolean) => void;
+    static navigate: (href: string, { push, scrollTarget }?: {
+        push?: boolean | undefined;
+        scrollTarget?: string | undefined;
+    }) => void;
     static "__#private@#q": QChannel<import("../typehints/AnyButUndefined.mjs").AnyButUndefined>;
     /**
      * @param {Document} doc
