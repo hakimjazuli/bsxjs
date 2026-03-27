@@ -18,7 +18,7 @@
 	"name": "@hakim_jazuli/bsxjs",
 	"module": "./dist/bsxjs.mjs",
 	"type": "module",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"types": "./generated/types/index.d.mts",
 	"scripts": {
 		"dev": "concurrently 'bun run autodoc' 'bun register-type' 'bun bundle-runable' 'bun bundle-runable-min' 'bun bundle-esm' 'bun bundle-runable-to-bss-temp'",
